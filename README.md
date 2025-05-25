@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AL Music Instrument Shop</title>
+  <style>
+    /* Reset and base */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #ffffff;
+      color: #000000;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    button {
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+    }
+    /* Header & nav */
+    header {
+      background-color: #000000;
+      color: white;
+      padding: 1.2rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      box-shadow: 0 3px 10px rgb(0 0 0 / 0.5);
+      user-select: none;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    #logo {
+      display: flex;
+      align-items: center;
+      font-weight: 900;
+      font-size: 2rem;
+      letter-spacing: 2px;
+      color: #fff;
+      text-shadow: 1px 1px 5px rgba(0,0,0,0.9);
+    }
+    #logo svg {
+      width: 38px;
+      height: 38px;
+      margin-right: 0.5rem;
+      fill: white;
+    }
+    nav#main-nav {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+      font-weight: 600;
+    }
+    nav#main-nav button, nav#main-nav a {
+      background: none;
+      color: white;
+      padding: 0.4rem 0.9rem;
+      border-radius: 6px;
+      transition: background-color 0.3s, color 0.3s;
+      font-size: 1rem;
+      user-select: none;
+    }
+    nav#main-nav button:hover, nav#main-nav a:hover {
+      background: white;
+      color: black;
+    }
+    nav#main-nav button.active {
+      background: white;
+      color: black;
+      font-weight: 700;
+    }
+    #actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    button#login-btn {
+      background: none;
+      color: white;
+      font-weight: 600;
+      padding: 0.3rem 1rem;
+      border: 1.5px solid white;
+      border-radius: 24px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    button#login-btn:hover {
+      background: white;
+      color: black;
+    }
+    button#cart-btn {
+      background: none;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s;
+      color: white;
+    }
+    button#cart-btn:hover {
+      background: white;
+      color: black;
+    }
+    #cart-count {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: red;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+    }
+    /* Search bar */
+    #search-container {
+      flex-grow: 1;
+      max-width: 360px;
+      position: relative;
+    }
+    #search-input {
+      width: 100%;
+      padding: 0.45rem 1.2rem;
+      border-radius: 20px;
+      border: 1px solid #999999;
+      font-size: 1rem;
+      outline: none;
+      color: #000;
+      background-color: #f9f9f9;
+      box-shadow: inset 1px 1px 3px #cccccc;
+      font-weight: 600;
+      transition: background-color 0.3s, box-shadow 0.3s, border-color 0.3s;
+    }
+    #search-input::placeholder {
+      color: #777777;
+      font-weight: 400;
+    }
+    #search-input:focus {
+      background-color: #fff;
+      box-shadow: 0 0 8px 2px #666666;
+      border-color: #444444;
+      font-weight: 700;
+    }
+    /* Filters under header */
+    #filters {
+      display: flex;
+      gap: 1.5rem;
+      padding: 1rem 2rem;
+      background: #f0f0f0;
+      border-bottom: 1px solid #ddd;
+      user-select: none;
+    }
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #222;
+    }
+    .filter-group button {
+      border: 1.5px solid #333;
+      border-radius: 12px;
+      padding: 0.3rem 0.9rem;
+      background: white;
+      color: #222;
+      font-weight: 600;
+      transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+      cursor: pointer;
+    }
+    .filter-group button.active {
+      background: #000;
+      color: #fff;
+      border-color: #000;
+      font-weight: 700;
+    }
+    .filter-group button:hover:not(.active) {
+      background: #ddd;
+    }
+    /* Main content: product grid */
+    main {
+      flex-grow: 1;
+      padding: 2rem 3rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+      overflow-y: auto;
+      background-color: #fff;
+      max-height: calc(100vh - 160px);
+      position: relative;
+    }
+    /* Product card */
+    .product-card {
+      background: #fafafa;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      box-shadow: 0 4px 14px rgb(0 0 0 / 0.08);
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+      cursor: pointer;
+      user-select: none;
+    }
+    .product-card:hover {
+      box-shadow: 0 12px 30px rgb(0 0 0 / 0.18);
+      transform: translateY(-5px);
+      z-index: 10;
+    }
+    .product-image {
+      height: 180px;
+      background-position: center;
+      background-size: contain;
+      background-repeat: no-repeat;
+      border-radius: 12px 12px 0 0;
+      background-color: #fff;
+      box-shadow: inset 0 0 9px #ccc;
+    }
+    .product-info {
+      padding: 1rem 1.2rem 1.2rem;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: #111;
+    }
+    .product-name {
+      font-weight: 900;
+      font-size: 1.2rem;
+      margin-bottom: 0.4rem;
+    }
+    .product-category,
+    .product-selling {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #444;
+      margin-bottom: 0.2rem;
+      text-transform: capitalize;
+    }
+    .product-price {
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: #000;
+      margin-top: 0.8rem;
+      user-select: text;
+    }
+    /* Modals general styles */
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 150;
+      backdrop-filter: blur(3px);
+    }
+    .modal-bg.active {
+      display: flex;
+    }
+    .modal {
+      background: #fff;
+      border-radius: 16px;
+      max-width: 720px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 22px 48px rgb(0 0 0 / 0.3);
+      padding: 2rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    /* Product detail modal */
+    #modal-product .modal-content {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    #modal-product .modal-image {
+      flex: 1 1 320px;
+      border-radius: 16px;
+      background-position: center;
+      background-size: contain;
+      background-repeat: no-repeat;
+      min-height: 320px;
+      background-color: #fff;
+      box-shadow: inset 0 0 12px #ccc;
+    }
+    #modal-product .modal-details {
+      flex: 1 1 280px;
+      display: flex;
+      flex-direction: column;
+      color: #222;
+      user-select: text;
+    }
+    #modal-product h2 {
+      margin-top: 0;
+      font-weight: 900;
+      font-size: 2.4rem;
+      margin-bottom: 0.4rem;
+      user-select: text;
+    }
+    #modal-product .category,
+    #modal-product .sellingType {
+      font-weight: 700;
+      font-size: 1rem;
+      text-transform: capitalize;
+      margin-bottom: 0.6rem;
+      color: #444;
+      user-select: none;
+    }
+    #modal-product .description {
+      font-size: 1.1rem;
+      line-height: 1.5;
+      flex-grow: 1;
+      margin-bottom: 1rem;
+    }
+    #modal-product .price {
+      font-weight: 900;
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      color: #000;
+      user-select: text;
+    }
+    #modal-product button.close-btn {
+      align-self: flex-start;
+      background-color: #000;
+      color: #fff;
+      padding: 0.6rem 1.4rem;
+      font-weight: 700;
+      font-size: 1rem;
+      border-radius: 10px;
+      transition: background-color 0.25s;
+      border: none;
+      cursor: pointer;
+      user-select: none;
+    }
+    #modal-product button.close-btn:hover {
+      background-color: #444;
+    }
+    #modal-product button.add-cart-btn {
+      background-color: #000;
+      color: #fff;
+      padding: 0.6rem 1.4rem;
+      font-weight: 700;
+      font-size: 1rem;
+      border-radius: 10px;
+      margin-top: 0.8rem;
+      transition: background-color 0.25s;
+      border: none;
+      cursor: pointer;
+      user-select: none;
+    }
+    #modal-product button.add-cart-btn:hover {
+      background-color: #444;
+    }
+    /* Login modal */
+    #modal-login form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      user-select: none;
+    }
+    #modal-login form label {
+      font-weight: 700;
+    }
+    #modal-login form input {
+      padding: 0.4rem 0.8rem;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    #modal-login form input:focus {
+      border-color: #000;
+    }
+    #modal-login form button {
+      padding: 0.6rem;
+      font-weight: 700;
+      font-size: 1rem;
+      background-color: #000;
+      color: white;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s;
+    }
+    #modal-login form button:hover {
+      background-color: #333;
+    }
+    /* Info modal (about us/contact) */
+    #modal-info .modal-content {
+      font-size: 1.1rem;
+      user-select: text;
+      color: #111;
+      line-height: 1.5;
+    }
+    #modal-info .modal-content h2 {
+      margin-top: 0;
+      font-weight: 900;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    #modal-info button.close-btn {
+      align-self: flex-start;
+      background-color: #000;
+      color: #fff;
+      padding: 0.6rem 1.4rem;
+      font-weight: 700;
+      font-size: 1rem;
+      border-radius: 10px;
+      transition: background-color 0.25s;
+      border: none;
+      cursor: pointer;
+      user-select: none;
+      margin-top: 1.5rem;
+    }
+    #modal-info button.close-btn:hover {
+      background-color: #444;
+    }
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #e1e1e1;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #888888;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555555;
+    }
+    /* Footer */
+    footer {
+      background-color: #000000;
+      color: #dddddd;
+      text-align: center;
+      padding: 1.2rem;
+      font-size: 1rem;
+      user-select: none;
+      flex-shrink: 0;
+      box-shadow: inset 0 2px 10px rgb(0 0 0 / 0.7);
+      letter-spacing: 0.03rem;
+    }
+    /* Visually hidden utility for label accessibility */
+    .visually-hidden {
+      position: absolute !important;
+      height: 1px; width: 1px;
+      overflow: hidden;
+      clip: rect(1px, 1px, 1px, 1px);
+      white-space: nowrap;
+      clip-path: inset(50%);
+      border: 0;
+      padding: 0;
+      margin: -1px;
+    }
+    /* Responsive focus outlines */
+    button:focus, input:focus {
+      outline: 3px solid #000;
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div id="logo" tabindex="0" aria-label="AL Music Instrument Shop">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true" focusable="false" >
+        <path d="M47 10L24 16v28a8 8 0 1 1-8-8V8l31-7z"/>
+        <circle cx="16" cy="44" r="7"/>
+      </svg>
+      AL Music Instrument Shop
+    </div>
+    <nav id="main-nav" aria-label="Main navigation">
+      <button type="button" id="nav-home" class="active" aria-current="page">Home</button>
+      <button type="button" id="nav-about">About Us</button>
+      <button type="button" id="nav-contact">Contact Us</button>
+    </nav>
+    <div id="actions">
+      <div id="search-container">
+        <label for="search-input" class="visually-hidden">Search products by name</label>
+        <input
+          type="search"
+          id="search-input"
+          placeholder="Search products..."
+          aria-label="Search products by name"
+          autocomplete="off"
+        />
+      </div>
+      <button id="login-btn" aria-haspopup="dialog" aria-expanded="false" aria-controls="modal-login">Login / Sign In</button>
+      <button id="cart-btn" aria-label="View shopping cart" aria-haspopup="dialog" aria-expanded="false" aria-controls="modal-cart">
+        🛒
+        <span id="cart-count" aria-live="polite" aria-atomic="true" style="display:none;">0</span>
+      </button>
+    </div>
+  </header>
+
+  <div id="filters" aria-label="Product filters">
+    <div class="filter-group" id="filter-selling-type" role="group" aria-labelledby="selling-type-label">
+      <div id="selling-type-label" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">Filter by Selling Type</div>
+      <button data-selling="all" class="active" aria-pressed="true" type="button">All</button>
+      <button data-selling="new product" aria-pressed="false" type="button">New Product</button>
+      <button data-selling="best seller" aria-pressed="false" type="button">Best Seller</button>
+      <button data-selling="promo" aria-pressed="false" type="button">Promo</button>
+    </div>
+    <div class="filter-group" id="filter-category" role="group" aria-labelledby="category-label">
+      <div id="category-label" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">Filter by Category</div>
+      <button data-category="all" class="active" aria-pressed="true" type="button">All</button>
+      <button data-category="guitar" aria-pressed="false" type="button">Guitar</button>
+      <button data-category="keyboard" aria-pressed="false" type="button">Keyboard</button>
+      <button data-category="drums" aria-pressed="false" type="button">Drums</button>
+      <button data-category="accessories" aria-pressed="false" type="button">Accessories</button>
+    </div>
+  </div>
+
+  <main id="product-list" tabindex="0" aria-live="polite" aria-label="Product listings">
+    <!-- Products loaded dynamically -->
+  </main>
+
+  <!-- Modals -->
+
+  <!-- Product Detail Modal -->
+  <div class="modal-bg" id="modal-product" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modal-product-title" tabindex="-1">
+    <div class="modal">
+      <div class="modal-content">
+        <div class="modal-image" id="modal-product-image" aria-label="Product image"></div>
+        <div class="modal-details">
+          <h2 id="modal-product-title">Product Name</h2>
+          <div class="category" id="modal-product-category">Category</div>
+          <div class="sellingType" id="modal-product-sellingType">Selling Type</div>
+          <p class="description" id="modal-product-description">Description</p>
+          <div class="price" id="modal-product-price">$0.00</div>
+          <button class="add-cart-btn" id="modal-add-to-cart-btn">Add to Cart</button>
+          <button class="close-btn" id="modal-product-close">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div class="modal-bg" id="modal-login" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modal-login-title" tabindex="-1">
+    <div class="modal">
+      <h2 id="modal-login-title">Login or Sign In</h2>
+      <form id="login-form" novalidate>
+        <label for="login-username">Username</label>
+        <input type="text" id="login-username" name="username" autocomplete="username" required />
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" name="password" autocomplete="current-password" required />
+        <button type="submit">Sign In</button>
+      </form>
+      <button class="close-btn" id="modal-login-close">Close</button>
+    </div>
+  </div>
+
+  <!-- Cart Modal -->
+  <div class="modal-bg" id="modal-cart" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modal-cart-title" tabindex="-1">
+    <div class="modal">
+      <h2 id="modal-cart-title">Shopping Cart</h2>
+      <div id="cart-items" style="min-height: 150px; margin: 1rem 0;"></div>
+      <div id="cart-total" style="font-weight: 700; font-size: 1.2rem;"></div>
+      <button class="close-btn" id="modal-cart-close">Close</button>
+    </div>
+  </div>
+
+  <!-- About Us Modal -->
+  <div class="modal-bg" id="modal-about" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modal-about-title" tabindex="-1">
+    <div class="modal" id="modal-info">
+      <h2 id="modal-about-title">About Us</h2>
+      <div class="modal-content">
+        <p>We're a home for music lovers, aspiring musicians, and seasoned professionals alike, all seeking quality instruments. Born from a deep passion for music, we founded AL Music Instrument Shop with one mission: to provide easy access to a wide range of the best musical instruments and their accessories.
+
+We believe every melody begins with a dream. Let us help you make yours a reality.</p>
+      </div>
+      <button class="close-btn" id="modal-about-close">Close</button>
+    </div>
+  </div>
+
+  <!-- Contact Us Modal -->
+  <div class="modal-bg" id="modal-contact" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modal-contact-title" tabindex="-1">
+    <div class="modal" id="modal-info">
+      <h2 id="modal-contact-title">Contact Us</h2>
+      <div class="modal-content">
+        <p>You can reach us at:</p>
+        <ul>
+          <li>Email: alson.yup270406@gmail.com</li>
+          <li>Phone: +62-822-8788-3880</li>
+          <li>Address: Baloi-Sei Ladi, Jl. Gajah Mada, Tiban Indah, Kec. Sekupang, Kota Batam, Kepulauan Riau 29426</li>
+        </ul>
+      </div>
+      <button class="close-btn" id="modal-contact-close">Close</button>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 AL Music Instrument Shop
+  </footer>
+
+  <script>
+    // Product data database simulation
+    const products = [
+      {
+        id: 1,
+        name: "Fender Stratocaster",
+        image: "Fender Stratocaster.webp",
+        category: "guitar",
+        sellingType: "best seller",
+        description: "An iconic electric guitar with versatile sound and vintage tone.",
+        price: 1200
+      },
+      {
+        id: 2,
+        name: "Yamaha Keyboard PSR-E363",
+        image: "Yamaha Keyboard PSR-E363.webp",
+        category: "keyboard",
+        sellingType: "new product",
+        description: "A great beginner keyboard with multiple voices and features.",
+        price: 250
+      },
+      {
+        id: 3,
+        name: "Roland TD-1 Drum Set",
+        image: "Roland TD-1 Drum Set.jpg",
+        category: "drums",
+        sellingType: "promo",
+        description: "Electronic drum kit ideal for practice and small performances.",
+        price: 800
+      },
+      {
+        id: 4,
+        name: "Guitar Picks Set",
+        image: "Guitar Picks Set.jpg",
+        category: "accessories",
+        sellingType: "promo",
+        description: "A set of assorted guitar picks made from durable materials.",
+        price: 15
+      },
+      {
+        id: 5,
+        name: "Martin Acoustic Guitar",
+        image: "Martin Acoustic Guitar.jpg",
+        category: "guitar",
+        sellingType: "new product",
+        description: "Premium acoustic guitar with rich deep tones and superb playability.",
+        price: 1500
+      },
+      {
+        id: 6,
+        name: "Casio Privia PX-160",
+        image: "Casio Privia PX-160.webp",
+        category: "keyboard",
+        sellingType: "best seller",
+        description: "Digital piano with realistic sound and weighted keys.",
+        price: 700
+      },
+      {
+        id: 7,
+        name: "Drum Sticks Pro",
+        image: "Drum Sticks Pro.jpg",
+        category: "accessories",
+        sellingType: "best seller",
+        description: "High-quality drum sticks suitable for professionals and beginners.",
+        price: 20
+      },
+      {
+        id: 8,
+        name: "Vintage Electric Guitar",
+        image: "Vintage Electric Guitar.jpg",
+        category: "guitar",
+        sellingType: "promo",
+        description: "Classic vintage electric guitar with a robust build and warm tone.",
+        price: 900
+      },
+      {
+        id: 9,
+        name: "Guitar Picks Set",
+        image: "Guitar Picks Set2.jpg",
+        category: "accessories",
+        sellingType: "promo",
+        description: "A set of assorted guitar picks made from durable materials.",
+        price: 15
+      }
+    ];
+
+    // Cart management in localStorage
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    // Filters state
+    let currentSellingType = 'all';
+    let currentCategory = 'all';
+    let currentSearch = '';
+
+    // DOM references
+    const productList = document.getElementById('product-list');
+    const filterSellingType = document.getElementById('filter-selling-type');
+    const filterCategory = document.getElementById('filter-category');
+    const searchInput = document.getElementById('search-input');
+    const cartBtn = document.getElementById('cart-btn');
+    const cartCount = document.getElementById('cart-count');
+    const loginBtn = document.getElementById('login-btn');
+
+    // Modals
+    const modalProduct = document.getElementById('modal-product');
+    const modalProductImage = document.getElementById('modal-product-image');
+    const modalProductTitle = document.getElementById('modal-product-title');
+    const modalProductCategory = document.getElementById('modal-product-category');
+    const modalProductSellingType = document.getElementById('modal-product-sellingType');
+    const modalProductDescription = document.getElementById('modal-product-description');
+    const modalProductPrice = document.getElementById('modal-product-price');
+    const modalAddToCartBtn = document.getElementById('modal-add-to-cart-btn');
+    const modalProductClose = document.getElementById('modal-product-close');
+
+    const modalLogin = document.getElementById('modal-login');
+    const modalLoginClose = document.getElementById('modal-login-close');
+    const loginForm = document.getElementById('login-form');
+
+    const modalCart = document.getElementById('modal-cart');
+    const modalCartClose = document.getElementById('modal-cart-close');
+    const cartItemsContainer = document.getElementById('cart-items');
+    const cartTotal = document.getElementById('cart-total');
+
+    const modalAbout = document.getElementById('modal-about');
+    const modalAboutClose = document.getElementById('modal-about-close');
+    const modalContact = document.getElementById('modal-contact');
+    const modalContactClose = document.getElementById('modal-contact-close');
+    const navAboutBtn = document.getElementById('nav-about');
+    const navContactBtn = document.getElementById('nav-contact');
+    const navHomeBtn = document.getElementById('nav-home');
+
+    // Render products based on filters and search
+    function renderProducts() {
+      productList.innerHTML = '';
+      const searchLower = currentSearch.toLowerCase();
+      let filtered = products.filter(p => {
+        const matchesSelling = currentSellingType === 'all' || p.sellingType === currentSellingType;
+        const matchesCategory = currentCategory === 'all' || p.category === currentCategory;
+        const matchesSearch = p.name.toLowerCase().includes(searchLower);
+        return matchesSelling && matchesCategory && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        productList.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:#666;">No products found.</p>';
+        return;
+      }
+
+      filtered.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.tabIndex = 0;
+        card.setAttribute('role', 'button');
+        card.setAttribute('aria-label', `${product.name}, ${product.category} category, selling type: ${product.sellingType}`);
+        card.innerHTML = `
+          <div class="product-image" style="background-image:url('${product.image}'); background-color: white;"></div>
+          <div class="product-info">
+            <div>
+              <div class="product-name">${product.name}</div>
+              <div class="product-category">Category: ${capitalize(product.category)}</div>
+              <div class="product-selling">Type: ${capitalize(product.sellingType)}</div>
+            </div>
+            <div class="product-price">$${product.price.toFixed(2)}</div>
+          </div>
+        `;
+        card.addEventListener('click', () => openProductModal(product));
+        card.addEventListener('keydown', (e) => {
+          if(e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openProductModal(product);
+          }
+        });
+        productList.appendChild(card);
+      });
+    }
+    // Capitalize helper
+    function capitalize(text) {
+      return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+
+    // Open product detail modal
+    let currentProduct = null;
+    function openProductModal(product) {
+      currentProduct = product;
+      modalProductImage.style.backgroundImage = `url('${product.image}')`;
+      modalProductImage.style.backgroundColor = "white";
+      modalProductTitle.textContent = product.name;
+      modalProductCategory.textContent = `Category: ${capitalize(product.category)}`;
+      modalProductSellingType.textContent = `Selling Type: ${capitalize(product.sellingType)}`;
+      modalProductDescription.textContent = product.description;
+      modalProductPrice.textContent = `$${product.price.toFixed(2)}`;
+      toggleModal(modalProduct, true);
+      modalAddToCartBtn.focus();
+    }
+    // Close product modal
+    modalProductClose.addEventListener('click', () => {
+      toggleModal(modalProduct, false);
+      currentProduct = null;
+    });
+
+    // Add to cart handler
+    modalAddToCartBtn.addEventListener('click', () => {
+      if(currentProduct) {
+        addToCart(currentProduct);
+        toggleModal(modalProduct, false);
+      }
+    });
+
+    // Cart management
+    function addToCart(product) {
+      const found = cart.find(item => item.id === product.id);
+      if(found) {
+        found.quantity++;
+      } else {
+        cart.push({...product, quantity: 1});
+      }
+      saveCart();
+      updateCartCount();
+    }
+    function removeFromCart(productId) {
+      cart = cart.filter(item => item.id !== productId);
+      saveCart();
+      updateCartCount();
+      renderCartItems();
+    }
+    function changeQuantity(productId, delta) {
+      const item = cart.find(i => i.id === productId);
+      if(!item) return;
+      item.quantity += delta;
+      if(item.quantity < 1) {
+        removeFromCart(productId);
+      } else {
+        saveCart();
+        updateCartCount();
+        renderCartItems();
+      }
+    }
+    function saveCart() {
+      localStorage.setItem('cart', JSON.stringify(cart));
+    }
+    function updateCartCount() {
+      const count = cart.reduce((a,b) => a + b.quantity,0);
+      if(count > 0) {
+        cartCount.style.display = 'flex';
+        cartCount.textContent = count;
+        cartBtn.setAttribute('aria-label', `Shopping cart with ${count} items`);
+      } else {
+        cartCount.style.display = 'none';
+        cartBtn.setAttribute('aria-label', 'Shopping cart is empty');
+      }
+    }
+    function renderCartItems() {
+      cartItemsContainer.innerHTML = '';
+      if(cart.length === 0) {
+        cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
+        cartTotal.textContent = '';
+        return;
+      }
+      cart.forEach(item => {
+        const div = document.createElement('div');
+        div.style.display = 'flex';
+        div.style.justifyContent = 'space-between';
+        div.style.alignItems = 'center';
+        div.style.padding = '0.5rem 0';
+        div.style.borderBottom = '1px solid #ccc';
+        div.innerHTML = `
+          <div style="flex-grow:1; font-weight:600;">${item.name} (x${item.quantity})</div>
+          <div>
+            <button aria-label="Decrease quantity" data-id="${item.id}" class="cart-qty-btn">-</button>
+            <button aria-label="Increase quantity" data-id="${item.id}" class="cart-qty-btn">+</button>
+            <button aria-label="Remove item" data-id="${item.id}" class="cart-remove-btn" style="color: red; margin-left:10px;">✕</button>
+          </div>
+          <div style="font-weight:700; min-width:70px; text-align:right;">$${(item.price*item.quantity).toFixed(2)}</div>
+        `;
+        cartItemsContainer.appendChild(div);
+      });
+      const total = cart.reduce((sum,item) => sum + item.price*item.quantity, 0);
+      cartTotal.textContent = `Total: $${total.toFixed(2)}`;
+
+      // Attach listeners for quantity and remove buttons
+      document.querySelectorAll('.cart-qty-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+          const id = parseInt(e.currentTarget.dataset.id);
+          if(e.currentTarget.textContent === '+') changeQuantity(id,1);
+          else changeQuantity(id,-1);
+        });
+      });
+      document.querySelectorAll('.cart-remove-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+          const id = parseInt(e.currentTarget.dataset.id);
+          removeFromCart(id);
+        });
+      });
+    }
+
+    // Toggle modal visibility and body scroll lock
+    function toggleModal(modal, show) {
+      if(show) {
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        // Focus modal for accessibility
+        modal.focus();
+      } else {
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+    }
+
+    // Login modal controls
+    loginBtn.addEventListener('click', () => {
+      toggleModal(modalLogin, true);
+      loginBtn.setAttribute('aria-expanded', 'true');
+      document.getElementById('login-username').focus();
+    });
+    modalLoginClose.addEventListener('click', () => {
+      toggleModal(modalLogin, false);
+      loginBtn.setAttribute('aria-expanded', 'false');
+      loginBtn.focus();
+    });
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('Login submitted (mock). Username: ' + loginForm.username.value);
+      toggleModal(modalLogin, false);
+      loginBtn.setAttribute('aria-expanded', 'false');
+    });
+
+    // Cart modal toggle
+    cartBtn.addEventListener('click', () => {
+      renderCartItems();
+      toggleModal(modalCart, true);
+      cartBtn.setAttribute('aria-expanded', 'true');
+    });
+    modalCartClose.addEventListener('click', () => {
+      toggleModal(modalCart, false);
+      cartBtn.setAttribute('aria-expanded', 'false');
+      cartBtn.focus();
+    });
+
+    // About Us modal toggle
+    navAboutBtn.addEventListener('click', () => {
+      toggleModal(modalAbout, true);
+      navAboutBtn.setAttribute('aria-current', 'page');
+      navHomeBtn.classList.remove('active');
+      navAboutBtn.classList.add('active');
+      navContactBtn.classList.remove('active');
+    });
+    modalAboutClose.addEventListener('click', () => {
+      toggleModal(modalAbout, false);
+      navAboutBtn.classList.remove('active');
+      navHomeBtn.classList.add('active');
+    });
+
+    // Contact Us modal toggle
+    navContactBtn.addEventListener('click', () => {
+      toggleModal(modalContact, true);
+      navContactBtn.setAttribute('aria-current', 'page');
+      navHomeBtn.classList.remove('active');
+      navAboutBtn.classList.remove('active');
+      navContactBtn.classList.add('active');
+    });
+    modalContactClose.addEventListener('click', () => {
+      toggleModal(modalContact, false);
+      navContactBtn.classList.remove('active');
+      navHomeBtn.classList.add('active');
+    });
+
+    // Home nav button resets filters and shows product list
+    navHomeBtn.addEventListener('click', () => {
+      navHomeBtn.classList.add('active');
+      navAboutBtn.classList.remove('active');
+      navContactBtn.classList.remove('active');
+      toggleModal(modalAbout, false);
+      toggleModal(modalContact, false);
+      // Reset filters
+      currentSellingType = 'all';
+      currentCategory = 'all';
+      currentSearch = '';
+      searchInput.value = '';
+      updateFilterButtons();
+      renderProducts();
+    });
+
+    // Filters event listeners
+    filterSellingType.addEventListener('click', (e) => {
+      if(e.target.tagName !== 'BUTTON') return;
+      if(currentSellingType === e.target.dataset.selling) return;
+      currentSellingType = e.target.dataset.selling;
+      updateFilterButtons();
+      renderProducts();
+    });
+    filterCategory.addEventListener('click', (e) => {
+      if(e.target.tagName !== 'BUTTON') return;
+      if(currentCategory === e.target.dataset.category) return;
+      currentCategory = e.target.dataset.category;
+      updateFilterButtons();
+      renderProducts();
+    });
+    // Update filter buttons states
+    function updateFilterButtons() {
+      filterSellingType.querySelectorAll('button').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.selling === currentSellingType);
+        btn.setAttribute('aria-pressed', btn.classList.contains('active'));
+      });
+      filterCategory.querySelectorAll('button').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.category === currentCategory);
+        btn.setAttribute('aria-pressed', btn.classList.contains('active'));
+      });
+    }
+    // Search input with debounce
+    function debounce(fn, delay) {
+      let timeout;
+      return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => fn.apply(this, args), delay);
+      };
+    }
+    searchInput.addEventListener('input', debounce(e => {
+      currentSearch = e.target.value.trim();
+      renderProducts();
+    }, 250));
+
+    // Modal close on escape key
+    window.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape') {
+        if(modalProduct.classList.contains('active')) toggleModal(modalProduct, false);
+        if(modalLogin.classList.contains('active')) toggleModal(modalLogin, false);
+        if(modalCart.classList.contains('active')) toggleModal(modalCart, false);
+        if(modalAbout.classList.contains('active')) toggleModal(modalAbout, false);
+        if(modalContact.classList.contains('active')) toggleModal(modalContact, false);
+      }
+    });
+
+    // Close modals on backdrop click
+    document.querySelectorAll('.modal-bg').forEach(modalBg => {
+      modalBg.addEventListener('click', (e) => {
+        if(e.target === modalBg) {
+          toggleModal(modalBg, false);
+        }
+      });
+    });
+
+    // Initial load
+    updateCartCount();
+    updateFilterButtons();
+    renderProducts();
+  </script>
+</body>
+</html>
+
+```
